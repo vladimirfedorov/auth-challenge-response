@@ -1,0 +1,19 @@
+{
+    "name": "auth-challenge-response",
+    "version": "0.3.0",
+    "description": "Easy to use challenge-response authentication, secure authentication in insecure environment.",
+    "keywords": ["authentication","auth","PBDKF2","challenge","response","password","login"],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vladimirfedorov/auth-challenge-response"
+    },
+    "main": "index.js",
+    "dependencies": {
+        "pbkdf2": "~3"
+    },
+    "engines": { 
+        "node": "*" 
+    },
+    "author": "Vladimir Fedorov (me@vladimirfedorov.com)",
+    "license": "MIT"
+}
