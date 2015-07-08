@@ -25,20 +25,20 @@ Optional functions for routes to check validity of created session and logout ar
     
     // checkPassword computes password hash using 
     // the same method the client is expected to use
-    function checkPassword(username, challenge, data, cb) {
-        console.log('username: ', username, '\nchallenge: ', challenge, '\ndata', data)
+    function checkPassword(challenge, clientHash, cb) {
         // TODO:
         // 1. Select user password hash from the database (username)
         // 2. Compute the second hash using generated challenge (challenge)
         // 3. Compare with the received client data (data)
         // 4. If hashes do not match, send error object with the callback function
-        // auth.hash is PBDKF2 using SHA-1 with 1 rotation
-        if ((username === 'admin') && auth.hash(auth.hash('password'))) {
-            // Everything is ok
+        // auth.hash is PBDKF2 using SHA-1 with 1 round
+        var challengeValue = challenge.value || '',
+            serverHash = auth.hash(auth.hash('password', 'user-secret'), challengeValue)
+        if (challenge.username === 'username' && clientHash === serverHash) {
             cb()
         } else {
             cb({status: 403, message: 'ACCESS DENIED'})
-        }
+        }   
     }
 
     app.use(cookieParser())
