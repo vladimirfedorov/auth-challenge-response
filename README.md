@@ -47,23 +47,35 @@ Optional functions for routes to check validity of created session and logout ar
     // and sets res.locals.authenticated variable
     app.get('*', auth.checkAuthentication)
     
-    // auth.challenge() sends challenge and salt to the user
+    // auth.challenge sends challenge and secret to client
+    // { id: challengeId, secret: secret, value: challengeValue }
     app.get('/auth/challenge/', auth.challenge)
     
-    // auth.authenticate() authenticates user
+    // auth.authenticate authenticates user
+    // Client sends challengeId and password hash in any format 
+    // supproted by the auth-challenge-response
+    // Examples:
+    // Query: /auth/authenticate?id=123&hash=z80kh2n...
+    // Body, to send with post request: POST /auth/authenticate with JSON body {"id":"123","hash":"z80kh2n..."}
     app.get('/auth/authenticate', auth.authenticate)
+    // to support id and hash values in the req.params object:
+    // app.get('/auth/authenticate/:id/:hash', auth.authenticate)
 
-    // auth.logout() destroys authentication data making 
+    // auth.logout destroys authentication data making 
     // client's token invalid
+    // auth.logout checks cookies authToken variable, req.params.token and req.query.token in this order
     app.get('/auth/logout', auth.logout)
     
-    // auth.check() sends status of authentication (JSON, {valid: true/false})
+    // auth.check sends status of authentication (JSON, {valid: true/false})
+    // auth.check checks cookies authToken variable, req.params.token and req.query.token in this order
     app.get('/auth/check', auth.check)
 
     app.get('/', function(req, res, next) {
         // Authentication result is available in res.locals.authenticated 
         var authenticated = res.locals.authenticated
-        res.status(200).send(authenticated)
+        
+        // ...
+        
     })
 
     app.listen(3945, function() {
