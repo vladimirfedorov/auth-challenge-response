@@ -77,17 +77,17 @@ module.exports.auth = function(app, params) {
     }
     
     this.checkAuthentication = function (req, res, next) {
-        var token = (req.cookies || {}).authToken || req.params.token,
+        var token = (req.cookies || req.body || {}).authToken || req.params.token || req.query.token,
             isValid = checkAuthentication(token)
-        
         res.locals.authenticated = isValid
         next()
     }
     
     
     this.check = function(req, res, next) {
-        var token = (req.cookies || req.body || {}).authToken || req.params.token,
+        var token = (req.cookies || req.body || {}).authToken || req.params.token || req.query.token,
             isValid = checkAuthentication(token)
+        if (!isValid) res.clearCookie('authToken')
         res.status(200).send({valid: isValid})
         next()
     }
@@ -132,8 +132,8 @@ module.exports.auth = function(app, params) {
     
     this.authenticate = function (req, res, next) {        
         var body = req.body || {},
-            challengeId = body.id || req.params.id || req.query.id,
             challenge = undefined,
+            challengeId = body.id || req.params.id || req.query.id,
             clientHash = body.hash || req.params.hash || req.query.hash
         
         checkStores()
@@ -166,7 +166,7 @@ module.exports.auth = function(app, params) {
     }
     
     this.logout = function(req, res, next) {
-        var token = (req.cookies || {}).authToken || req.params.token
+        var token = (req.cookies || {}).authToken || req.params.token || req.query.token
         checkStores()
         if (token && app.locals[authStore][token]) app.locals[authStore][token] = undefined
         res.clearCookie('authToken')
@@ -176,4 +176,3 @@ module.exports.auth = function(app, params) {
     
     return this
 }
-
