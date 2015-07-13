@@ -6,7 +6,7 @@
 
 - Secure authentication in insecure environment
 - Easy to setup 
-- Requires no database for work
+- No database required for authentication
 
 ## Usage
 
@@ -87,8 +87,5 @@ Optional functions for routes to check validity of created session and logout ar
 
 ## Theory
 
-[Wiki Challenge-Response Authentication]()
+[Wiki Challenge-Response Authentication](https://en.wikipedia.org/wiki/Challenge–response_authentication)
 
-## Implementation
-
-Client requests challenge and salt for user password.
