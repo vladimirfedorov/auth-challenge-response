@@ -21,17 +21,18 @@ Optional functions for routes to check validity of created session and logout ar
     var express = require('express'),
         app = express(),
         cookieParser = require('cookie-parser'),
-        auth = require('auth-challenge-response').auth(app, {checkPassword: checkPassword})
+        bodyParser = require('body-parser'),
+        auth = require('auth-challenge-response').auth(app, {secret: 'secret', checkPassword: checkPassword})
     
     // checkPassword computes password hash using 
     // the same method the client is expected to use
     function checkPassword(challenge, clientHash, cb) {
         // TODO:
-        // 1. Select user password hash from the database (username)
-        // 2. Compute the second hash using generated challenge (challenge)
-        // 3. Compare with the received client data (data)
+        // 1. Select user password hash from the database (challenge.username)
+        // 2. Compute the second hash using generated challenge (challenge.value)
+        // 3. Compare with the received client data (clientHash)
         // 4. If hashes do not match, send error object with the callback function
-        // auth.hash is PBDKF2 using SHA-1 with 1 round
+        // auth.hash is PBDKF2 using SHA-1
         var challengeValue = challenge.value || '',
             serverHash = auth.hash(auth.hash('password', 'user-secret'), challengeValue)
         if (challenge.username === 'username' && clientHash === serverHash) {
@@ -47,8 +48,8 @@ Optional functions for routes to check validity of created session and logout ar
     // and sets res.locals.authenticated variable
     app.get('*', auth.checkAuthentication)
     
-    // auth.challenge sends challenge and secret to client
-    // { id: challengeId, secret: secret, value: challengeValue }
+    // auth.challenge sends challenge and secret to client:
+    // { id: challengeId, username: username, secret: secret, value: challengeValue }
     app.get('/auth/challenge/', auth.challenge)
     
     // auth.authenticate authenticates user
